@@ -2,6 +2,7 @@ package com.example.android.activity_inspector;
 
 import android.Manifest;
 import android.annotation.SuppressLint;
+import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.hardware.Sensor;
 import android.hardware.SensorManager;
@@ -37,6 +38,8 @@ public class MainActivity extends AppCompatActivity {
     private Accelerometer mAcc;
     private Button mReadButton;
     private Button mLogButton;
+    private Button mClearButton;
+
 
     @SuppressLint("MissingPermission")
     @Override
@@ -48,10 +51,14 @@ public class MainActivity extends AppCompatActivity {
         createLocationCallback();
         createLocationRequest();
         startLocationUpdates();
-        mAcc = new Accelerometer(this);
+
+
+        Intent i = new Intent(MainActivity.this, MyService.class);
+        startService(i);
 
         mReadButton = (Button) findViewById(R.id.readContents);
-        mLogButton = (Button) findViewById(R.id.logActivities);
+        mLogButton = (Button) findViewById(R.id.showSpeed);
+        mClearButton = (Button) findViewById(R.id.clearList);
 
         mLogButton.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -63,7 +70,15 @@ public class MainActivity extends AppCompatActivity {
         mReadButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+                Intent i = new Intent(MainActivity.this, ShowActivities.class);
+                startActivity(i);
+            }
+        });
 
+        mClearButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                FileManager.clearList(MainActivity.this);
             }
         });
 
