@@ -1,5 +1,7 @@
 package com.example.android.activity_inspector;
 
+import android.location.Location;
+
 import java.io.Serializable;
 import java.sql.Time;
 import java.util.Date;
@@ -9,6 +11,17 @@ public class MyActivity implements Serializable {
     private String activityName;
     private Date startTime;
     private Date endTime;
+    private String startLocation;
+    private String endLocation;
+    private Double speed;
+
+    public Double getSpeed() {
+        return speed;
+    }
+
+    public void setSpeed(Double speed) {
+        this.speed = speed;
+    }
 
     public MyActivity(String s, Date t) {
         activityName = s;
@@ -42,5 +55,21 @@ public class MyActivity implements Serializable {
 
     public void setEndTime(Date endTime) {
         this.endTime = endTime;
+    }
+
+    public String getStartLocation() {
+        return startLocation;
+    }
+
+    public void setStartLocation(String startLocation) {
+        this.startLocation = startLocation;
+    }
+
+    public String getEndLocation() {
+        return endLocation;
+    }
+
+    public void setEndLocation(String endLocation) {
+        this.endLocation = endLocation;
     }
 }

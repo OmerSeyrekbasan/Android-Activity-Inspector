@@ -12,6 +12,7 @@ import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
+import java.util.Locale;
 import java.util.concurrent.TimeUnit;
 
 public class ActivityAdapter extends RecyclerView.Adapter<ActivityAdapter.ViewHolder> {
@@ -40,9 +41,23 @@ public class ActivityAdapter extends RecyclerView.Adapter<ActivityAdapter.ViewHo
 
 
         holder.mActivityName.setText(act.getActivityName());
-        holder.mActivityStart.setText(act.getStartTime().toString());
-        holder.mActivityEnd.setText(act.getEndTime().toString());
+        Date str  = act.getStartTime();
+        String format3 = new SimpleDateFormat("HH:mm:ss", Locale.ENGLISH).format(str);
+        holder.mActivityStart.setText(format3);
+
+
+        str  = act.getEndTime();
+        format3 = new SimpleDateFormat("HH:mm:ss", Locale.ENGLISH).format(str);
+        holder.mActivityEnd.setText(format3);
+
+
         holder.mActivityId.setText(String.valueOf(position + 1));
+        if (act.getEndLocation() != null)
+            holder.mEndLoc.setText(act.getEndLocation().toString());
+        else holder.mEndLoc.setText("-----");
+        if (act.getStartLocation() != null)
+            holder.mStartLoc.setText(act.getStartLocation().toString());
+        else holder.mStartLoc.setText("-----");
 
         Calendar c1 = Calendar.getInstance();
         Calendar c2 = Calendar.getInstance();
@@ -84,6 +99,8 @@ public class ActivityAdapter extends RecyclerView.Adapter<ActivityAdapter.ViewHo
         TextView mActivityEnd;
         TextView mActivityId;
         TextView mActivityDur;
+        TextView mStartLoc;
+        TextView mEndLoc;
 
         ViewHolder(View itemView) {
             super(itemView);
@@ -92,6 +109,8 @@ public class ActivityAdapter extends RecyclerView.Adapter<ActivityAdapter.ViewHo
             mActivityEnd = itemView.findViewById(R.id.end_time);
             mActivityId = itemView.findViewById(R.id.activity_number);
             mActivityDur = itemView.findViewById(R.id.activity_duration);
+            mStartLoc = itemView.findViewById(R.id.start_loc);
+            mEndLoc = itemView.findViewById(R.id.end_loc);
             itemView.setOnClickListener(this);
         }
 

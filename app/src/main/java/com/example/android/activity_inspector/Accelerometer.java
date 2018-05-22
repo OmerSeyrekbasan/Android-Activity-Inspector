@@ -5,6 +5,8 @@ import android.hardware.Sensor;
 import android.hardware.SensorEvent;
 import android.hardware.SensorEventListener;
 import android.hardware.SensorManager;
+import android.location.Location;
+import android.os.Bundle;
 import android.util.Log;
 
 
@@ -18,11 +20,9 @@ public class Accelerometer implements SensorEventListener {
     private Sensor mAcc;
     private String TAG = "Accelerometer";
     private String current = "Empty";
-    private String next = "Stationary";
-    private int numNext = 9;
+    private String next = "Empty";
     private Queue<String> q;
     private Context context;
-
 
 
 
@@ -45,10 +45,10 @@ public class Accelerometer implements SensorEventListener {
             Double magnitude =  Math.sqrt(sum);
 //            Log.d(TAG, "Magnitude = " + magnitude);
 
-            Log.d(TAG, String.valueOf(magnitude));
-            if (magnitude > 4.0) {
+//            Log.d(TAG, String.valueOf(magnitude));
+            if (magnitude > 4.5) {
                 activity("Running");
-            } else if (magnitude > 2.0) {
+            } else if (magnitude > 1.5) {
                 activity("Walking");
             } else {
                 activity("Stationary");
@@ -60,17 +60,26 @@ public class Accelerometer implements SensorEventListener {
     public void activity(String type) {
 
 //        Log.d(TAG, type);
-        if (q.size() > 30)
-            q.poll();
+        if (q.size() > 10)
+            q.remove();
         q.add(type);
         String nextType = calcPercent();
 //        Log.d(TAG, "Returned = " + nextType);
-        if (!nextType.equals("NoType") && !nextType.equals(current)) {
-            MyActivity myActivity = new MyActivity(nextType, Calendar.getInstance().getTime());
+        if (!nextType.equals("NoType")) {
+            if (!nextType.equals(current)) {
+                MyActivity myActivity = new MyActivity(nextType, Calendar.getInstance().getTime());
+                Location l = SpeedActivity.getCurrentLocation();
+                if (l != null) {
+                    Double lat = l.getLatitude();
+                    Double lon = l.getLongitude();
+                    myActivity.setStartLocation(String.valueOf(lat)+ "," + String.valueOf(lon));
+                }
+
             Log.d("Current", current);
-            current = nextType;
-            FileManager.writeFile(myActivity, context);
-            Log.d(TAG, nextType);
+                current = nextType;
+                FileManager.writeFile(myActivity, context);
+                Log.d(TAG, nextType);
+            }
         }
 
 
@@ -83,6 +92,7 @@ public class Accelerometer implements SensorEventListener {
 
 //       if (numNext == 10 && current != next) {
 //           MyActivity myActivity = new MyActivity(next, Calendar.getInstance().getTime());
+
 //           Log.d("TAG", next);
 //           current = next;
 //           FileManager.writeFile(myActivity, context);
@@ -95,6 +105,7 @@ public class Accelerometer implements SensorEventListener {
     }
 
     public String calcPercent() {
+        Log.d(TAG, q.toString());
         int running = 0;
         int walking = 0;
         int stat = 0;
@@ -109,11 +120,11 @@ public class Accelerometer implements SensorEventListener {
             }
         }
 
-        if (running >20)
+        if (running >3)
             return "Running";
-        if (walking >20)
+        if (walking >3)
             return "Walking";
-        if (stat > 20)
+        if (stat > 3)
             return "Stationary";
         return "NoType";
 

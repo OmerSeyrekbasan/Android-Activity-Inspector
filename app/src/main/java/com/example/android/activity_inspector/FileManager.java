@@ -1,6 +1,7 @@
 package com.example.android.activity_inspector;
 
 import android.content.Context;
+import android.location.Location;
 import android.util.Log;
 
 import java.io.File;
@@ -40,12 +41,30 @@ public class FileManager {
             tmp = list.get(list.size() - 1);
             tmp.setEndTime(Calendar.getInstance().getTime());
             list.remove(list.size() - 1);
-            list.add(tmp);
+            long time1 = tmp.getStartTime().getTime();
+            long time2 = tmp.getEndTime().getTime();
+
+            long time = time2 - time1;
+
+            Location l = SpeedActivity.getCurrentLocation();
+            if (l != null) {
+                Double lat = l.getLatitude();
+                Double lon = l.getLongitude();
+                tmp.setEndLocation(String.valueOf(lat)+ "," + String.valueOf(lon));
+            }
+
+
+
+            if (time >1000)
+                list.add(tmp);
+
+
         }
+
+
 
         list.add(myActivity);
 
-//        list.clear();
         try {
 
             FileOutputStream fos = context.openFileOutput(filename, Context.MODE_PRIVATE);
